@@ -1,0 +1,25 @@
+@page
+@model RazorAgCharts.Sample.Pages.IndexModel
+@{
+    ViewData["Title"] = "AG Charts";
+}
+
+<article class="page">
+    <p class="nav">
+        <a href="/live">Interactive Blazor chart</a>
+        <a href="/gallery">All chart types</a>
+    </p>
+    <h1>AG Charts on a Razor Page</h1>
+    <p>This page uses the <code>ag-chart</code> tag helper. The chart is created in the browser from the options rendered with the page.</p>
+    <ag-chart options="Model.Options" height="460px" on-series-node-click="showSale" aria-label="Ice cream sales and average temperature"></ag-chart>
+    <p id="razor-status" role="status">Click a bar or point.</p>
+</article>
+
+<script>
+    window.showSale = (event) => {
+        const month = event.datum?.month ?? "Point";
+        const sales = event.datum?.iceCreamSales;
+        const status = document.getElementById("razor-status");
+        status.textContent = sales == null ? month + " selected." : month + ": " + Number(sales).toLocaleString() + " sales";
+    };
+</script>

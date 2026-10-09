@@ -1,0 +1,27 @@
+@page "/gallery"
+@rendermode InteractiveServer
+
+<PageTitle>AG Charts gallery</PageTitle>
+
+<article class="page page-wide">
+    <p class="nav">
+        <a href="/">Razor Page chart</a>
+        <a href="/live">Interactive chart</a>
+    </p>
+    <h1>Chart types</h1>
+    <p>One example of each series type supported by the wrapper. Enterprise examples load the AG Charts Enterprise bundle.</p>
+
+    <div class="chart-grid">
+        @foreach (var demo in ChartGallery.All)
+        {
+            <section class="chart-card">
+                <h2>@demo.Name</h2>
+                <p class="edition">@demo.Edition</p>
+                <AgChart Options="demo.Options"
+                         Edition="demo.Edition"
+                         Height="300px"
+                         AriaLabel="@demo.Name" />
+            </section>
+        }
+    </div>
+</article>

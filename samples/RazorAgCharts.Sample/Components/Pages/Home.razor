@@ -1,0 +1,86 @@
+﻿@page "/live"
+@rendermode InteractiveServer
+@using RazorAgCharts
+
+<PageTitle>Interactive AG Chart</PageTitle>
+
+<article class="page">
+    <p class="nav">
+        <a href="/">Razor Page chart</a>
+        <a href="/gallery">All chart types</a>
+    </p>
+    <h1>Interactive AG Chart</h1>
+    <p>This page hosts the <code>AgChart</code> Blazor component. Reverse the months, switch theme, download a PNG, or click a point.</p>
+
+    <div class="toolbar">
+        <button type="button" @onclick="Reverse">Reverse months</button>
+        <button type="button" @onclick="ToggleTheme">Toggle theme</button>
+        <button type="button" @onclick="Download">Download PNG</button>
+    </div>
+    <p id="blazor-status" role="status">@_message</p>
+
+    <AgChart @ref="_chart"
+             Options="_options"
+             Height="460px"
+             AriaLabel="Ice cream sales and average temperature"
+             OnSeriesNodeClick="OnNode" />
+
+    <h2>Sales share</h2>
+    <AgChart Options="_pie" Height="360px" AriaLabel="Share of ice cream sales" />
+</article>
+
+@code {
+    private AgChart? _chart;
+    private readonly List<IceCreamMonth> _months = [.. SampleCharts.Months];
+    private string _theme = AgChartThemes.Default;
+    private string _message = "Click a bar or point.";
+    private AgChartOptions _options = SampleCharts.IceCream();
+    private AgChartOptions _pie = new()
+    {
+        Title = new AgCaptionOptions { Text = "Share of sales" },
+        Data = SampleCharts.Months.ToList(),
+        Series = [AgSeriesOptions.Pie("iceCreamSales", "month")],
+        Legend = new AgLegendOptions { Position = AgLegendPositions.Right },
+    };
+
+    private void Reverse()
+    {
+        _months.Reverse();
+        _options = SampleCharts.IceCream(_months, _theme);
+        _pie = PieOptions();
+    }
+
+    private void ToggleTheme()
+    {
+        _theme = _theme == AgChartThemes.Default ? AgChartThemes.DefaultDark : AgChartThemes.Default;
+        _options = SampleCharts.IceCream(_months, _theme);
+    }
+
+    private Task OnNode(AgChartEventArgs args)
+    {
+        var month = args.Datum.TryGetProperty("month", out var monthValue) ? monthValue.GetString() : "Point";
+        var sales = args.Datum.TryGetProperty("iceCreamSales", out var salesValue) && salesValue.TryGetDouble(out var amount)
+            ? amount.ToString("N0")
+            : null;
+        _message = sales is null ? $"{month} selected." : $"{month}: {sales} sales";
+        return Task.CompletedTask;
+    }
+
+    private async Task Download()
+    {
+        if (_chart is null)
+        {
+            return;
+        }
+
+        await _chart.DownloadAsync(new AgChartImageOptions { FileName = "ice-cream" });
+    }
+
+    private AgChartOptions PieOptions() => new()
+    {
+        Title = new AgCaptionOptions { Text = "Share of sales" },
+        Data = _months.ToList(),
+        Series = [AgSeriesOptions.Pie("iceCreamSales", "month")],
+        Legend = new AgLegendOptions { Position = AgLegendPositions.Right },
+    };
+}

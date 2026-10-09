@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="RazorAgCharts.csproj" />
+  <Project Path="samples/RazorAgCharts.Sample/RazorAgCharts.Sample.csproj" />
+  <Project Path="tests/RazorAgCharts.Tests/RazorAgCharts.Tests.csproj" />
+</Solution>

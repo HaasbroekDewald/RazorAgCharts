@@ -1,0 +1,13 @@
+@namespace RazorAgCharts
+
+<div class="ag-chart-shell @CssClass">
+    @if (_error is not null)
+    {
+        <div class="ag-chart-error" role="alert">@_error</div>
+    }
+    <div @ref="_container"
+         class="ag-chart-host"
+         style="@HostStyle"
+         role="img"
+         aria-label="@ComputedAriaLabel"></div>
+</div>
